@@ -8,15 +8,12 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(800, 600), "Render de funciones");
 
-    // Tomamos un punto cualquiera
+    // Crear los puntos para la representación discreta
     sf::CircleShape punto(1.f);
 
     //Primitivo de los ejes
     sf::RectangleShape Eje_x(sf::Vector2f(10000, 2.0));
     sf::RectangleShape Eje_y(sf::Vector2f(2.0, 10000));
-
-    Eje_x.setOrigin(sf::Vector2f(0,0));
-    Eje_y.setOrigin(sf::Vector2f(0,0));
 
     // Dar color a las cosas
     punto.setFillColor(sf::Color::Green);
@@ -27,24 +24,29 @@ int main()
     {
 
         
+
+
+
         window.clear();
 
         //Dibujar la cuadrícula
         for(float i = 0.f; i < 800.f; i += 10.f){
             Eje_x.setPosition(sf::Vector2f(0, i));
             Eje_y.setPosition(sf::Vector2f(i, 0));
+
+            window.draw(Eje_x);
+            window.draw(Eje_y);
         }
 
-        // Pintar objeto
-        for (int i = 0; i < 100; i++)
+        // Pintar punto (Breve representación de la función)
+        for (float i = 0; i < 100.f; i++)
         {
             x = i * 8.0;
-            y = 30;
-            punto.setPosition(sf::Vector2f(x, y));
+            y = i * i;
+            punto.setPosition(sf::Vector2f(x, 300 - y));
             window.draw(punto);
         }
-        window.draw(Eje_x);
-        window.draw(Eje_y);
+
         // Mostrar lo pintado
         window.display();
     }
