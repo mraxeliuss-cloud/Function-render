@@ -1,55 +1,105 @@
 #include <SFML/Graphics.hpp>
+#include <algorithm>
 #include <iostream>
 
-int main()
+// Pinta la cuadrícula
+void Pintar_Cuadricula(int mayor_Valor_Pantalla, int espacio_Entre_Casillas, sf::RenderWindow &window)
 {
-    float x = 0;
-    float y;
 
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Render de funciones");
-
-    // LineStrip usa cada vértice como inicio del siguiente
-    // Lo que permite representaciones continuas, no solo discretas
-    sf::VertexArray funcion(sf::PrimitiveType::LineStrip, 100);
-
-    //Primitivo de los ejes
-    sf::RectangleShape Eje_x(sf::Vector2f(10000.f, 2.f));
-    sf::RectangleShape Eje_y(sf::Vector2f(2.f, 10000.f));
-
-    // Dar color a los ejes
+    // Ejes
+    static sf::RectangleShape Eje_x(sf::Vector2f(10000.f, 1.f));
+    static sf::RectangleShape Eje_y(sf::Vector2f(1.f, 10000.f));
+    // Color
     Eje_x.setFillColor(sf::Color::Blue);
     Eje_y.setFillColor(sf::Color::Magenta);
 
+    // Dibujar la cuadrícula
+    for (float i = 0.f; i < mayor_Valor_Pantalla; i += espacio_Entre_Casillas)
+    {
+        // Espaciamos los ejes 10 px, para poder hacer un análisis de los resultados
+        Eje_x.setPosition(sf::Vector2f(0, i));
+        Eje_y.setPosition(sf::Vector2f(i, 0));
+
+        window.draw(Eje_x);
+        window.draw(Eje_y);
+    }
+}
+
+
+sf::VertexArray Pintar_Funcion(int alto_Pantalla, int mayor_Valor_Pantalla, int espacio_Entre_Casillas)
+{
+    // Declaracion de la funcion
+    static sf::VertexArray funcion (sf::PrimitiveType::LineStrip, mayor_Valor_Pantalla);
+
+    //
+    int x = 0;
+    int y;
+
+    // Pintar funcion
+    for (float i = 0; i < mayor_Valor_Pantalla; i += 1)
+    {
+        // Es necesario igualar a 0, sino, en cada frame se mueve, y no se ve
+        if (x > mayor_Valor_Pantalla)
+            x = 0;
+
+        // Función
+        y = (i * i) / 100;
+
+        // alto_Pantalla / 2 ubica el inicio de la función en el centro de la pantalla
+        funcion[i].position = sf::Vector2f(x, (alto_Pantalla / 2) - y);
+        funcion[i].color = sf::Color::Green;
+
+        // Movemos el paso para que cada punto sea un '1'
+        x += espacio_Entre_Casillas;
+
+    }
+    return funcion;
+}
+
+
+int main()
+{
+
+    // Introducir eventualmente el videomod, pero revisar como ubicar el centro de la pantalla
+    int ancho_Pantalla = 800;
+    int alto_Pantalla = 600;
+
+    // Espacio entre casillas
+    int espacio_Entre_Casillas = 10;
+
+    // Variable de representacion, la usamos como valor máximo
+    // Si bien podríamos asimismo, usar el elemento menor de ambos, de momento prefiero usar el mayor
+    float mayor_Valor_Pantalla = std::max(ancho_Pantalla, alto_Pantalla);
+
+    // Variables matemáticas
+    float x = 0;
+    float y;
+
+    // LineStrip usa cada vértice como inicio del siguiente
+    // Lo que permite representaciones continuas, no solo discretas
+
+    // Evento
+    sf::Event evento;
+
+    // Crear la ventana del programa
+    sf::RenderWindow window(sf::VideoMode(ancho_Pantalla, alto_Pantalla), "Render de funciones");
+
+
     while (window.isOpen())
     {
-
-        window.clear();
-
-        //Dibujar la cuadrícula
-        for(float i = 0.f; i < 800.f; i += 10.f){
-            //Espaciamos los ejes 10 px, para poder hacer un análisis de los resultados
-            Eje_x.setPosition(sf::Vector2f(0, i));
-            Eje_y.setPosition(sf::Vector2f(i, 0));
-
-            window.draw(Eje_x);
-            window.draw(Eje_y);
-        }
-
-        // Pintar funcion
-        for (float i = 0; i < 800.f; i++)
+        // Process events
+        while (window.pollEvent(evento))
         {
-            x = i;
-            // Función
-            y = (x * x)  ;
-
-            // Dar a cada eje su posición
-            // 300 - y hace que la función inicie en mitad de la pantalla
-            float posicion = 0;
-            funcion[i].position = sf::Vector2f(posicion , 300 - y);
-            funcion[i].color = sf::Color::Green;
-            window.draw(funcion);
-            posicion+= 10;
+            // Close window: exit
+            if (evento.type == sf::Event::Closed)
+                window.close();
         }
+
+        Pintar_Cuadricula(mayor_Valor_Pantalla, espacio_Entre_Casillas, window);
+        auto funcion = Pintar_Funcion(alto_Pantalla, mayor_Valor_Pantalla, espacio_Entre_Casillas);
+        
+        window.clear();
+        window.draw(funcion);
 
         // Mostrar lo pintado
         window.display();
