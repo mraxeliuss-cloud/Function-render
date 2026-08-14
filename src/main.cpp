@@ -9,6 +9,7 @@ void Pintar_Cuadricula(int mayor_Valor_Pantalla, int espacio_Entre_Casillas, sf:
     // Ejes
     static sf::RectangleShape Eje_x(sf::Vector2f(10000.f, 1.f));
     static sf::RectangleShape Eje_y(sf::Vector2f(1.f, 10000.f));
+
     // Color
     Eje_x.setFillColor(sf::Color::Blue);
     Eje_y.setFillColor(sf::Color::Magenta);
@@ -29,21 +30,18 @@ void Pintar_Cuadricula(int mayor_Valor_Pantalla, int espacio_Entre_Casillas, sf:
 sf::VertexArray Pintar_Funcion(int alto_Pantalla, int mayor_Valor_Pantalla, int espacio_Entre_Casillas)
 {
     // Declaracion de la funcion
-    static sf::VertexArray funcion (sf::PrimitiveType::LineStrip, mayor_Valor_Pantalla);
+    static sf::VertexArray funcion (sf::PrimitiveType::LineStrip, mayor_Valor_Pantalla / 10);
 
-    //
-    int x = 0;
-    int y;
+    float x = 0;
+    float y;
 
     // Pintar funcion
-    for (float i = 0; i < mayor_Valor_Pantalla; i += 1)
+    for (float i = 0; i < mayor_Valor_Pantalla / 10; i++)
     {
-        // Es necesario igualar a 0, sino, en cada frame se mueve, y no se ve
-        if (x > mayor_Valor_Pantalla)
-            x = 0;
 
+        x = i * 10;
         // Función
-        y = (i * i) / 100;
+        y = i * (-i);
 
         // alto_Pantalla / 2 ubica el inicio de la función en el centro de la pantalla
         funcion[i].position = sf::Vector2f(x, (alto_Pantalla / 2) - y);
@@ -54,6 +52,7 @@ sf::VertexArray Pintar_Funcion(int alto_Pantalla, int mayor_Valor_Pantalla, int 
 
     }
     return funcion;
+
 }
 
 
@@ -95,10 +94,10 @@ int main()
                 window.close();
         }
 
-        Pintar_Cuadricula(mayor_Valor_Pantalla, espacio_Entre_Casillas, window);
-        auto funcion = Pintar_Funcion(alto_Pantalla, mayor_Valor_Pantalla, espacio_Entre_Casillas);
-        
         window.clear();
+
+        auto funcion = Pintar_Funcion(alto_Pantalla, mayor_Valor_Pantalla, espacio_Entre_Casillas);
+        Pintar_Cuadricula(mayor_Valor_Pantalla, espacio_Entre_Casillas, window);
         window.draw(funcion);
 
         // Mostrar lo pintado
