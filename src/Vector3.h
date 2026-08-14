@@ -4,6 +4,7 @@
 class Vector3
 {
     private:
+
     float x;
     float y; 
     float z;
@@ -11,6 +12,12 @@ class Vector3
     public: 
     //Constructor
     Vector3(float x, float y, float z);
+    
+    //Setters
+    void set_x(float cambio){x = cambio;}
+    void set_y(float cambio){y = cambio;}
+    void set_z(float cambio){z = cambio;}
+    //Getters
 
     
     //Operaciones internas
@@ -20,25 +27,29 @@ class Vector3
 
     //Normalizar
     //Divide cada miembro por el módulo
-    Vector3 normalizar();
+
+    //Este devuelve un modificado
+    void normalizado();
+    //Este devuelve una copia con la operación hecha, mantiene ambos
+    Vector3 const normalizar();
 
     //Operaciones básicas con escalares
     //Modifican el vector actual
     //Multiplica cada miembro por un escalar
-    Vector3 multiplicacion ( float multiplicando );
+    void multiplicacion ( float multiplicando );
     //Divide cada miembro por un escalar
-    Vector3 division( float divisor);
+    void division( float dividendo);
 
     //Operaciones básicas con vectores
     //Todos devuelven objetos nuevos
     //Suma dos vectores, elemento a elemento
-    Vector3 suma( Vector3 sumando);
+    Vector3 operator+(const Vector3& sumando) const;
     //Resta dos vectores elemento a elemento
-    Vector3 resta( Vector3 sustraendo);
+    Vector3 operator-(const Vector3& sustraendo) const;
     //Multiplica de forma vectorial
     Vector3 productoVectorial(Vector3 multiplicando);
     //Da el producto escalar de dos vectores
-    float productoEscalar (Vector3 sumando);
+    float productoEscalar (Vector3 multiplicando);
 
 };
 
