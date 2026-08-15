@@ -18,9 +18,9 @@ class Vector3
     void set_y(float cambio){y = cambio;}
     void set_z(float cambio){z = cambio;}
     //Getters
-    float get_x(){ return this->x; }
-    float get_y(){ return this->y; }
-    float get_z(){ return this->z; }
+    float get_x() const { return this->x; }
+    float get_y() const { return this->y; }
+    float get_z() const { return this->z; }
 
     //Modulo 
     //Calcula el módulo "Tamaño" del vector
