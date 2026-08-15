@@ -30,27 +30,6 @@ Vector3 const Vector3::normalizar()
 
 }
 
-//Multiplicamos todo el vector por el escalar
-void Vector3::multiplicacion(float multiplicando)
-{
-
-    set_x(x * multiplicando);
-    set_y(y * multiplicando);
-    set_z(z * multiplicando);
-
-}
-
-//Dividimos todo el vector por el escalar
-void Vector3::division(float dividendo)
-{
-
-    set_x(x / dividendo);
-    set_y(y / dividendo);
-    set_z(z / dividendo);
-
-}
-
-
 Vector3 Vector3::operator+(const Vector3& sumando) const
 {
 
@@ -90,5 +69,25 @@ float Vector3::productoEscalar(Vector3 multiplicando)
     float au2 = this->y * multiplicando.y;
     float au3 = this->z * multiplicando.z;
     return (au1 + au2 + au3);
+
+}
+
+Vector3 Vector3::operator*(float multiplicando) const
+{
+
+    float au1 = this->x * multiplicando;
+    float au2 = this->y * multiplicando;
+    float au3 = this->z * multiplicando;
+    return Vector3(au1, au2, au3);
+
+}
+
+Vector3 Vector3::operator/(float divisor) const
+{
+
+    float au1 = this->x / divisor;
+    float au2 = this->y / divisor;
+    float au3 = this->z / divisor;
+    return Vector3(au1, au2, au3);
 
 }

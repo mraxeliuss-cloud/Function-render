@@ -34,11 +34,11 @@ class Vector3
     Vector3 const normalizar();
 
     //Operaciones básicas con escalares
-    //Modifican el vector actual
-    //Multiplica cada miembro por un escalar
-    void multiplicacion ( float multiplicando );
-    //Divide cada miembro por un escalar
-    void division( float dividendo);
+    //Multiplica por un escalar
+    Vector3 operator*(float multiplicando) const;
+    //Divide el vector por un escalar, y devuelve uno nuevo
+    Vector3 operator/(float divisor) const; 
+
 
     //Operaciones básicas con vectores
     //Todos devuelven objetos nuevos
