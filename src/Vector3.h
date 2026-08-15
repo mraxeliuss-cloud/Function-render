@@ -18,9 +18,10 @@ class Vector3
     void set_y(float cambio){y = cambio;}
     void set_z(float cambio){z = cambio;}
     //Getters
+    float get_x(){ return this->x; }
+    float get_y(){ return this->y; }
+    float get_z(){ return this->z; }
 
-    
-    //Operaciones internas
     //Modulo 
     //Calcula el módulo "Tamaño" del vector
     float const magnitud();
@@ -34,22 +35,25 @@ class Vector3
     Vector3 const normalizar();
 
     //Operaciones básicas con escalares
-    //Multiplica por un escalar
     Vector3 operator*(float multiplicando) const;
-    //Divide el vector por un escalar, y devuelve uno nuevo
     Vector3 operator/(float divisor) const; 
 
 
     //Operaciones básicas con vectores
     //Todos devuelven objetos nuevos
-    //Suma dos vectores, elemento a elemento
     Vector3 operator+(const Vector3& sumando) const;
-    //Resta dos vectores elemento a elemento
-    Vector3 operator-(const Vector3& sustraendo) const;
+    Vector3 operator-(const Vector3& minuendo) const;
+
     //Multiplica de forma vectorial
     Vector3 productoVectorial(Vector3 multiplicando);
     //Da el producto escalar de dos vectores
     float productoEscalar (Vector3 multiplicando);
+
+    //Operadores de acumulación
+    void operator*=(float multiplo);
+    void operator/=(float divisor);
+    void operator+=(const Vector3 sumando);
+    void operator-=(const Vector3 minuendo);
 
 };
 

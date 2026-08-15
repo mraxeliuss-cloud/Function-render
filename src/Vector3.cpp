@@ -72,12 +72,12 @@ float Vector3::productoEscalar(Vector3 multiplicando)
 
 }
 
-Vector3 Vector3::operator*(float multiplicando) const
+Vector3 Vector3::operator*(float multiplo) const
 {
 
-    float au1 = this->x * multiplicando;
-    float au2 = this->y * multiplicando;
-    float au3 = this->z * multiplicando;
+    float au1 = this->x * multiplo;
+    float au2 = this->y * multiplo;
+    float au3 = this->z * multiplo;
     return Vector3(au1, au2, au3);
 
 }
@@ -90,4 +90,39 @@ Vector3 Vector3::operator/(float divisor) const
     float au3 = this->z / divisor;
     return Vector3(au1, au2, au3);
 
+}
+
+//Operadores de acumulación
+void Vector3::operator*=(float multiplo)
+{
+
+    this->x * multiplo;
+    this->y * multiplo;
+    this->z * multiplo;
+
+}
+
+void Vector3::operator/=(float divisor)
+{
+
+    this->x / divisor;
+    this->y / divisor;
+    this->z / divisor;
+}
+
+void Vector3::operator+=(const Vector3 sumando)
+{
+    
+    this->x + sumando.x;
+    this->y + sumando.y;
+    this->z + sumando.z;
+    
+}
+
+void Vector3::operator-=(const Vector3 sustraendo)
+{
+
+    this->x - sustraendo.x;
+    this->y - sustraendo.y;
+    this->z - sustraendo.z;
 }
