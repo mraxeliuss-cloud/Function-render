@@ -1,6 +1,8 @@
 #include "Vector3.h"
 #include <math.h>
 
+#include "Vector4.h"
+
 //Obtenemos el módulo
 float const Vector3::magnitud()
 {
@@ -50,7 +52,7 @@ Vector3 Vector3::operator-(const Vector3& sustraendo) const
 
 }
 
-Vector3 Vector3::productoVectorial(Vector3 multiplicando)
+Vector3 Vector3::productoVectorial(Vector3& multiplicando)
 {
 
     // Por claridad, no hacemos el proceso completo, sino que directamente pasamos a la formula
@@ -62,7 +64,7 @@ Vector3 Vector3::productoVectorial(Vector3 multiplicando)
 
 }
 
-float Vector3::productoEscalar(Vector3 multiplicando)
+float Vector3::productoEscalar(Vector3& multiplicando)
 {
 
     float au1 = this->x * multiplicando.x;
@@ -96,33 +98,38 @@ Vector3 Vector3::operator/(float divisor) const
 void Vector3::operator*=(float multiplo)
 {
 
-    this->x * multiplo;
-    this->y * multiplo;
-    this->z * multiplo;
+    this->x *= multiplo;
+    this->y *= multiplo;
+    this->z *= multiplo;
 
 }
 
 void Vector3::operator/=(float divisor)
 {
 
-    this->x / divisor;
-    this->y / divisor;
-    this->z / divisor;
+    this->x /= divisor;
+    this->y /= divisor;
+    this->z /= divisor;
 }
 
 void Vector3::operator+=(const Vector3 sumando)
 {
     
-    this->x + sumando.x;
-    this->y + sumando.y;
-    this->z + sumando.z;
+    this->x += sumando.x;
+    this->y += sumando.y;
+    this->z += sumando.z;
     
 }
 
 void Vector3::operator-=(const Vector3 sustraendo)
 {
 
-    this->x - sustraendo.x;
-    this->y - sustraendo.y;
-    this->z - sustraendo.z;
+    this->x -= sustraendo.x;
+    this->y -= sustraendo.y;
+    this->z -= sustraendo.z;
+}
+
+Vector4 Vector3::homogeneizar() const
+{
+    return Vector4(*this);
 }

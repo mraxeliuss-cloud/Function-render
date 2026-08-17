@@ -16,6 +16,8 @@ class Matriz4x4{
     Matriz4x4();
     //Requiere de 16 parámetros
     Matriz4x4(std::initializer_list<float> valores);
+    //Por comodidad para el cálculo
+    Matriz4x4(const std::array<float, 16>& valores);
 
     //Operadores de multiplicacion necesarios
     Matriz4x4 operator*(const Matriz4x4& multiplo) const;

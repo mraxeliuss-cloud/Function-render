@@ -30,6 +30,9 @@ void Pintar_Cuadricula(int mayor_Valor_Pantalla, int espacio_Entre_Casillas, sf:
 sf::VertexArray Pintar_Funcion(int alto_Pantalla, int mayor_Valor_Pantalla, int espacio_Entre_Casillas)
 {
     // Declaracion de la funcion
+    // LineStrip usa cada vértice como inicio del siguiente
+    // Lo que permite representaciones continuas, no solo discretas
+
     static sf::VertexArray funcion (sf::PrimitiveType::LineStrip, mayor_Valor_Pantalla / 10);
 
     float x = 0;
@@ -73,9 +76,6 @@ int main()
     // Variables matemáticas
     float x = 0;
     float y;
-
-    // LineStrip usa cada vértice como inicio del siguiente
-    // Lo que permite representaciones continuas, no solo discretas
 
     // Evento
     sf::Event evento;

@@ -1,6 +1,8 @@
 #ifndef VECTOR3_H
 #define VECTOR3_H
 
+class Vector4;
+
 class Vector3
 {
     private:
@@ -45,9 +47,9 @@ class Vector3
     Vector3 operator-(const Vector3& minuendo) const;
 
     //Multiplica de forma vectorial
-    Vector3 productoVectorial(Vector3 multiplicando);
+    Vector3 productoVectorial(Vector3& multiplicando);
     //Da el producto escalar de dos vectores
-    float productoEscalar (Vector3 multiplicando);
+    float productoEscalar (Vector3& multiplicando);
 
     //Operadores de acumulación
     void operator*=(float multiplo);
@@ -55,6 +57,8 @@ class Vector3
     void operator+=(const Vector3 sumando);
     void operator-=(const Vector3 minuendo);
 
+    //Para la multiplicación con matrices
+    Vector4 homogeneizar() const;
 };
 
 #endif
