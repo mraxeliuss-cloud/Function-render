@@ -26,6 +26,15 @@ class Vector4
     float get_z() const{ return this->z; }
     float get_w() const{ return this->w; }
 
+    //setters
+    
+    void set_x(float numero) { this->x = numero; }
+    void set_y(float numero) { this->y = numero; }
+    void set_z(float numero) { this->z = numero; }
+    void set_w(float numero) { this->w = numero; }
+
+
+
     Vector3 toVector3() const;
 
     //Necesarios como pasos intermedios

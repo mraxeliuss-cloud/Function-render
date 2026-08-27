@@ -11,5 +11,11 @@ FetchContent_Declare(
     GIT_TAG 2.6.1
 )
 FetchContent_MakeAvailable(sfml)
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(${PROJECT_NAME} 
+    src/main.cpp
+    src/Vector3.cpp
+    src/Vector4.cpp
+    src/Matriz4x4.cpp
+
+)
 target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics sfml-window sfml-system)

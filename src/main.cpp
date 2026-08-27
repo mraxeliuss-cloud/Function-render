@@ -1,6 +1,10 @@
 #include <SFML/Graphics.hpp>
 #include <algorithm>
 #include <iostream>
+#include <vector>
+
+#include "Vector3.h"
+#include "Matriz4x4.h"
 
 // Pinta la cuadrícula
 void Pintar_Cuadricula(int mayor_Valor_Pantalla, int espacio_Entre_Casillas, sf::RenderWindow &window)
@@ -26,14 +30,13 @@ void Pintar_Cuadricula(int mayor_Valor_Pantalla, int espacio_Entre_Casillas, sf:
     }
 }
 
-
 sf::VertexArray Pintar_Funcion(int alto_Pantalla, int mayor_Valor_Pantalla, int espacio_Entre_Casillas)
 {
     // Declaracion de la funcion
     // LineStrip usa cada vértice como inicio del siguiente
     // Lo que permite representaciones continuas, no solo discretas
 
-    static sf::VertexArray funcion (sf::PrimitiveType::LineStrip, mayor_Valor_Pantalla / 10);
+    static sf::VertexArray funcion(sf::PrimitiveType::LineStrip, mayor_Valor_Pantalla / 10);
 
     float x = 0;
     float y;
@@ -52,12 +55,9 @@ sf::VertexArray Pintar_Funcion(int alto_Pantalla, int mayor_Valor_Pantalla, int 
 
         // Movemos el paso para que cada punto sea un '1'
         x += espacio_Entre_Casillas;
-
     }
     return funcion;
-
 }
-
 
 int main()
 {
@@ -83,9 +83,17 @@ int main()
     // Crear la ventana del programa
     sf::RenderWindow window(sf::VideoMode(ancho_Pantalla, alto_Pantalla), "Render de funciones");
 
+    // Temporales para probar las representaciones
+    Vector3 punto(1.0f, 0.0f, 0.0f);
 
     while (window.isOpen())
     {
+        static float angulo = 0.0f;
+        angulo += 0.01f;
+        Matriz4x4 rotacion = Matriz4x4::rotacion_y(angulo);
+        Vector3 puntoRotado = rotacion.operator*(punto);
+        float x_pantalla = puntoRotado.get_x() * 100.0f + 400.0f;
+        float y_pantalla = puntoRotado.get_y() * 100.0f + 300.0f;
         // Process events
         while (window.pollEvent(evento))
         {
@@ -96,8 +104,13 @@ int main()
 
         window.clear();
 
+        sf::CircleShape drawPoint(5.0f);
+        drawPoint.setFillColor(sf::Color::Red);
+        drawPoint.setPosition(x_pantalla, y_pantalla);
+        window.draw(drawPoint);
+
         auto funcion = Pintar_Funcion(alto_Pantalla, mayor_Valor_Pantalla, espacio_Entre_Casillas);
-        Pintar_Cuadricula(mayor_Valor_Pantalla, espacio_Entre_Casillas, window);
+        // Pintar_Cuadricula(mayor_Valor_Pantalla, espacio_Entre_Casillas, window);
         window.draw(funcion);
 
         // Mostrar lo pintado

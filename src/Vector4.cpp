@@ -10,7 +10,7 @@ Vector4::Vector4(const Vector3 &vector)
     this->z = vector.get_z();
 }
 
-Vector4::Vector4(std::array<float, 4>& array)
+Vector4::Vector4(const std::array<float, 4>& array)
 {
     this->x = array[0];
     this->y = array[1];
@@ -33,10 +33,12 @@ Vector3 Vector4::toVector3() const
 
 Vector4 Vector4::operator*(float multiplo)
 {
-    this->x *= multiplo;
-    this->y *= multiplo;
-    this->z *= multiplo;
-    this->w *= multiplo;
+    Vector4 solucion({0,0,0,0});
+    solucion.set_x(this->x *= multiplo);
+    solucion.set_y(this->y *= multiplo);
+    solucion.set_z(this->z *= multiplo);
+    solucion.set_w(this->w *= multiplo);
+    return solucion;
 }
 
 std::array<float, 4> Vector4::toArray() const
