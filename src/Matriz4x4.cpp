@@ -2,6 +2,7 @@
 #include "Vector3.h"
 #include "Vector4.h"
 
+#include <cmath>
 #include <array>
 #include <initializer_list>
 
@@ -95,15 +96,15 @@ Vector3 Matriz4x4::operator*(const Vector3 &multiplo) const
 {
 
     Vector4 original = multiplo.homogeneizar();
-    std::array<float,4> aMultiplicar = original.toArray();
+    std::array<float, 4> aMultiplicar = original.toArray();
 
+    std::array<float, 4> resultado = {0, 0, 0, 0};
 
-    std::array<float, 4> resultado = {0,0,0,0};
-
-
-    for(int i = 0; i < 4; i++){
+    for (int i = 0; i < 4; i++)
+    {
         float au = 0;
-        for(int j = 0; j < 4; j++){
+        for (int j = 0; j < 4; j++)
+        {
             au += this->matriz[i][j] * aMultiplicar[j];
         }
         resultado[i] = au;
@@ -111,4 +112,67 @@ Vector3 Matriz4x4::operator*(const Vector3 &multiplo) const
 
     Vector4 final(resultado);
     return final.toVector3();
+}
+
+Matriz4x4 Matriz4x4::traslacion(float tx, float ty, float tz)
+{
+
+    Matriz4x4 resultado;
+
+    //Sustitucon en el Colum Major 
+    resultado.matriz[0][3] = tx;
+    resultado.matriz[1][3] = ty;
+    resultado.matriz[2][3] = tz;
+    return resultado;
+}
+
+Matriz4x4 Matriz4x4::escalado(float sx, float sy, float sz)
+{
+
+    Matriz4x4 resultado;
+
+    //Sustitución de la DP por los valores de escalado
+    resultado.matriz[0][0] = sx;
+    resultado.matriz[1][1] = sy;
+    resultado.matriz[2][2] = sz;
+    return resultado;
+}
+
+Matriz4x4 Matriz4x4::rotacion_x(float angulo)
+{
+
+    Matriz4x4 resultado;
+
+    //Rotación sobre el eje horizontal
+    resultado.matriz[1][1] = cos(angulo);
+    resultado.matriz[1][2] = - (sin(angulo));
+    resultado.matriz[2][1] = sin(angulo);
+    resultado.matriz[2][2] = cos(angulo);
+    return resultado;
+}
+
+Matriz4x4 Matriz4x4::rotacion_y(float angulo)
+{
+
+    Matriz4x4 resultado;
+
+    //Rotación sobre el eje vertical
+    resultado.matriz[0][0] = cos(angulo);
+    resultado.matriz[0][2] = - (sin(angulo));
+    resultado.matriz[2][0] = sin(angulo);
+    resultado.matriz[2][2] = cos(angulo);
+    return resultado;
+}
+
+Matriz4x4 Matriz4x4::rotacion_z(float angulo)
+{
+
+    Matriz4x4 resultado;
+
+    //Rotación sobre el eje de profundidad
+    resultado.matriz[0][0] = cos(angulo);
+    resultado.matriz[0][1] = - (sin(angulo));
+    resultado.matriz[1][0] = sin(angulo);
+    resultado.matriz[1][1] = cos(angulo);
+    return resultado;
 }
