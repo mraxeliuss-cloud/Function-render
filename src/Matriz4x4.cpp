@@ -4,6 +4,7 @@
 
 #include <cmath>
 #include <array>
+#include <stdexcept>
 #include <initializer_list>
 
 Matriz4x4::Matriz4x4()
@@ -24,11 +25,13 @@ Matriz4x4::Matriz4x4()
 
 Matriz4x4::Matriz4x4(std::initializer_list<float> valores)
 {
+    if(valores.size() != 16){
+        throw std::invalid_argument("La lista de elementos debe tener 16 elementos");
+    }
+    int fila = 0;
+    int columna = -1;
     if (valores.size() == 16)
     {
-
-        int fila = 0;
-        int columna = -1;
         for (float i : valores)
         {
             columna++;
@@ -37,21 +40,6 @@ Matriz4x4::Matriz4x4(std::initializer_list<float> valores)
             {
                 columna = 0;
                 fila++;
-            }
-        }
-    }
-    else
-    {
-        for (int i = 0; i < 4; i++)
-        {
-            for (int j = 0; j < 4; j++)
-            {
-                if (i == j)
-                {
-                    matriz[i][j] = 1.f;
-                }
-                else
-                    matriz[i][j] = 0.f;
             }
         }
     }
@@ -119,7 +107,7 @@ Matriz4x4 Matriz4x4::traslacion(float tx, float ty, float tz)
 
     Matriz4x4 resultado;
 
-    //Sustitucon en el Colum Major 
+    //Sustitucon en el Row-Major 
     resultado.matriz[0][3] = tx;
     resultado.matriz[1][3] = ty;
     resultado.matriz[2][3] = tz;

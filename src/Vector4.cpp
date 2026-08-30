@@ -1,5 +1,6 @@
 #include "Vector4.h"
 #include "Vector3.h"
+#include "Utilidades.h"
 
 #include <array>
 
@@ -20,11 +21,7 @@ Vector4::Vector4(const std::array<float, 4>& array)
 
 Vector3 Vector4::toVector3() const
 {
-    if (w == 0.f)
-    {
-        return Vector3(this->x, this->y, this->z);
-    }
-    if (w == 1.0f)
+    if (Matematicas::floatIguales(w, 1.0f) || Matematicas::floatIguales(w, 0.0f))
     {
         return Vector3(this->x, this->y, this->z);
     }
@@ -51,7 +48,7 @@ std::array<float, 4> Vector4::toArray() const
     return convertido;
 }
 
-float Vector4::operator*(float multiplo) const
+float Vector4::productoEscalar(float multiplo) const
 {
     
     float au1 = this->x * multiplo;

@@ -19,7 +19,7 @@ void Pintar_Cuadricula(int mayor_Valor_Pantalla, int espacio_Entre_Casillas, sf:
     Eje_y.setFillColor(sf::Color::Magenta);
 
     // Dibujar la cuadrícula
-    for (float i = 0.f; i < mayor_Valor_Pantalla; i += espacio_Entre_Casillas)
+    for (size_t i = 0.f; i < mayor_Valor_Pantalla; i += espacio_Entre_Casillas)
     {
         // Espaciamos los ejes 10 px, para poder hacer un análisis de los resultados
         Eje_x.setPosition(sf::Vector2f(0, i));
@@ -35,8 +35,7 @@ sf::VertexArray Pintar_Funcion(int alto_Pantalla, int mayor_Valor_Pantalla, int 
     // Declaracion de la funcion
     // LineStrip usa cada vértice como inicio del siguiente
     // Lo que permite representaciones continuas, no solo discretas
-
-    static sf::VertexArray funcion(sf::PrimitiveType::LineStrip, mayor_Valor_Pantalla / 10);
+    sf::VertexArray funcion(sf::PrimitiveType::LineStrip, mayor_Valor_Pantalla / 10);
 
     float x = 0;
     float y;
@@ -52,9 +51,6 @@ sf::VertexArray Pintar_Funcion(int alto_Pantalla, int mayor_Valor_Pantalla, int 
         // alto_Pantalla / 2 ubica el inicio de la función en el centro de la pantalla
         funcion[i].position = sf::Vector2f(x, (alto_Pantalla / 2) - y);
         funcion[i].color = sf::Color::Green;
-
-        // Movemos el paso para que cada punto sea un '1'
-        x += espacio_Entre_Casillas;
     }
     return funcion;
 }
@@ -84,37 +80,96 @@ int main()
     sf::RenderWindow window(sf::VideoMode(ancho_Pantalla, alto_Pantalla), "Render de funciones");
 
     // Temporales para probar las representaciones
-    Vector3 punto(1.0f, 0.0f, 0.0f);
+    std::vector<Vector3> cubo = {
+        {-1.0f, -1.0f, -1.0f}, // 0
+        {1.0f, -1.0f, -1.0f},  // 1
+        {1.0f, 1.0f, -1.0f},   // 2
+        {-1.0f, 1.0f, -1.0f},  // 3
+        {-1.0f, -1.0f, 1.0f},  // 4
+        {1.0f, -1.0f, 1.0f},   // 5
+        {1.0f, 1.0f, 1.0f},    // 6
+        {-1.0f, 1.0f, 1.0f}    // 7
+    };
+
+    std::vector<std::pair<int, int>> aristas = {
+        {0, 1}, {1, 2}, {2, 3}, {3, 0}, // cara frontal (z = -1)
+        {4, 5},
+        {5, 6},
+        {6, 7},
+        {7, 4}, // cara trasera (z = 1)
+        {0, 4},
+        {1, 5},
+        {2, 6},
+        {3, 7} // unión entre caras
+    };
+    // Display mode
+    static bool Modo3D = false;
 
     while (window.isOpen())
     {
-        static float angulo = 0.0f;
-        angulo += 0.01f;
-        Matriz4x4 rotacion = Matriz4x4::rotacion_y(angulo);
-        Vector3 puntoRotado = rotacion.operator*(punto);
-        float x_pantalla = puntoRotado.get_x() * 100.0f + 400.0f;
-        float y_pantalla = puntoRotado.get_y() * 100.0f + 300.0f;
-        // Process events
+
+
         while (window.pollEvent(evento))
         {
             // Close window: exit
             if (evento.type == sf::Event::Closed)
                 window.close();
+            if (evento.type == sf::Event::KeyPressed)
+            {
+                if (evento.key.code == sf::Keyboard::M)
+                {
+                    Modo3D = !Modo3D;
+                }
+            }
         }
 
-        window.clear();
+        float y_pantalla;
 
-        sf::CircleShape drawPoint(5.0f);
-        drawPoint.setFillColor(sf::Color::Red);
-        drawPoint.setPosition(x_pantalla, y_pantalla);
-        window.draw(drawPoint);
+        if (!Modo3D)
+        {
+            // Modo 2D
+            window.clear();
+            auto funcion = Pintar_Funcion(alto_Pantalla, mayor_Valor_Pantalla, espacio_Entre_Casillas);
+            Pintar_Cuadricula(mayor_Valor_Pantalla, espacio_Entre_Casillas, window);
+            window.draw(funcion);
 
-        auto funcion = Pintar_Funcion(alto_Pantalla, mayor_Valor_Pantalla, espacio_Entre_Casillas);
-        // Pintar_Cuadricula(mayor_Valor_Pantalla, espacio_Entre_Casillas, window);
-        window.draw(funcion);
+            window.display();
+        }
+        else
+        {
 
-        // Mostrar lo pintado
-        window.display();
+            static float angulo = 0.0f;
+            angulo += 0.01f;
+            Matriz4x4 rotacion = Matriz4x4::rotacion_y(angulo);
+
+            // CUBO
+            std::vector<sf::Vector2f> puntosProyectados;
+            puntosProyectados.reserve(cubo.size());
+
+            for (const auto &vertice : cubo)
+            {
+                Vector3 puntoRotado = rotacion * vertice;
+                float x_pantalla = puntoRotado.get_x() * 100.0f + 400.0f;
+                float y_pantalla = puntoRotado.get_y() * 100.0f + 300.0f;
+                puntosProyectados.push_back(sf::Vector2f(x_pantalla, y_pantalla));
+            }
+
+            // Aristas
+            sf::VertexArray lineas(sf::Lines, aristas.size() * 2);
+            for (size_t i = 0; i < aristas.size(); ++i)
+            {
+                int i1 = aristas[i].first;
+                int i2 = aristas[i].second;
+                lineas[2 * i].position = puntosProyectados[i1];
+                lineas[2 * i + 1].position = puntosProyectados[i2];
+                lineas[2 * i].color = sf::Color::White;
+                lineas[2 * i + 1].color = sf::Color::White;
+            }
+            window.clear();
+            window.draw(lineas); // dibuja el cubo completo con una sola llamada
+
+            window.display();
+        }
     }
     return 0;
 }

@@ -26,7 +26,7 @@ class Vector3
 
     //Modulo 
     //Calcula el módulo "Tamaño" del vector
-    float const magnitud();
+    float magnitud() const;
 
     //Normalizar
     //Divide cada miembro por el módulo
@@ -34,7 +34,7 @@ class Vector3
     //Este devuelve un modificado
     void normalizado();
     //Este devuelve una copia con la operación hecha, mantiene ambos
-    Vector3 const normalizar();
+    Vector3 normalizar()const;
 
     //Operaciones básicas con escalares
     Vector3 operator*(float multiplicando) const;
@@ -47,9 +47,9 @@ class Vector3
     Vector3 operator-(const Vector3& minuendo) const;
 
     //Multiplica de forma vectorial
-    Vector3 productoVectorial(Vector3& multiplicando);
+    Vector3 productoVectorial(const Vector3& multiplicando)const;
     //Da el producto escalar de dos vectores
-    float productoEscalar (Vector3& multiplicando);
+    float productoEscalar (const Vector3& multiplicando)const;
 
     //Operadores de acumulación
     void operator*=(float multiplo);

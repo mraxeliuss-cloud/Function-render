@@ -1,7 +1,8 @@
 #include "Vector3.h"
-#include <math.h>
-
 #include "Vector4.h"
+
+#include <stdexcept>
+#include <math.h>
 
 Vector3::Vector3(float x, float y, float z) : x(x), y(y), z(z) 
 {
@@ -9,7 +10,7 @@ Vector3::Vector3(float x, float y, float z) : x(x), y(y), z(z)
 }
 
 //Obtenemos el módulo
-float const Vector3::magnitud()
+float Vector3::magnitud() const
 {
     return (sqrt((x * x) + (y * y) + (z * z)));
 }
@@ -19,6 +20,9 @@ void Vector3::normalizado()
 {
 
     float modulo = this->magnitud();
+    if(modulo == 0){
+        throw std::invalid_argument("El modulo del vector es 0");
+    }
     this->set_x(x / modulo);
     this->set_y(y / modulo);
     this->set_z(z / modulo);
@@ -26,7 +30,7 @@ void Vector3::normalizado()
 }
 
 //Dividimos por el módulo, creamos otro vector
-Vector3 const Vector3::normalizar()
+Vector3 Vector3::normalizar() const
 {
 
     float modulo = this->magnitud();
@@ -57,7 +61,7 @@ Vector3 Vector3::operator-(const Vector3& sustraendo) const
 
 }
 
-Vector3 Vector3::productoVectorial(Vector3& multiplicando)
+Vector3 Vector3::productoVectorial(const Vector3& multiplicando) const
 {
 
     // Por claridad, no hacemos el proceso completo, sino que directamente pasamos a la formula
@@ -69,7 +73,7 @@ Vector3 Vector3::productoVectorial(Vector3& multiplicando)
 
 }
 
-float Vector3::productoEscalar(Vector3& multiplicando)
+float Vector3::productoEscalar(const Vector3& multiplicando) const
 {
 
     float au1 = this->x * multiplicando.x;

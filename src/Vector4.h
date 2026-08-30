@@ -38,7 +38,7 @@ class Vector4
     Vector3 toVector3() const;
 
     //Necesarios como pasos intermedios
-    float operator*(float multiplo) const;
+    float productoEscalar(float multiplo) const;
     
     //Modifica el vector actual
     Vector4 operator*(float multiplo);
