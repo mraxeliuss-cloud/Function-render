@@ -13,6 +13,7 @@ class Vector3
 
     public: 
     //Constructor
+    Vector3();
     Vector3(float x, float y, float z);
     
     //Setters

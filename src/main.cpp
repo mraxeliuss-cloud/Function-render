@@ -5,6 +5,7 @@
 
 #include "Vector3.h"
 #include "Matriz4x4.h"
+#include "Camara.h"
 
 // Pinta la cuadrícula
 void Pintar_Cuadricula(int mayor_Valor_Pantalla, int espacio_Entre_Casillas, sf::RenderWindow &window)
@@ -79,6 +80,12 @@ int main()
     // Crear la ventana del programa
     sf::RenderWindow window(sf::VideoMode(ancho_Pantalla, alto_Pantalla), "Render de funciones");
 
+    // Crear la cámara
+    Camara camara;
+    camara.eye = {3.0f, 2.0f, 4.0f};
+    camara.target = {0.0f, 0.0f, 0.0f};
+    camara.up = {0.0f, 1.0f, 0.0f};
+
     // Temporales para probar las representaciones
     std::vector<Vector3> cubo = {
         {-1.0f, -1.0f, -1.0f}, // 0
@@ -107,8 +114,6 @@ int main()
 
     while (window.isOpen())
     {
-
-
         while (window.pollEvent(evento))
         {
             // Close window: exit
@@ -137,24 +142,34 @@ int main()
         }
         else
         {
+            // 1. Matriz de vista (cámara)
+            Matriz4x4 vista = Matriz4x4::lookAt(camara);
 
-            static float angulo = 0.0f;
-            angulo += 0.01f;
+            // 2. Rotación del cubo
+            static float angulo = 1.0f;
+            angulo += 0.1f;
             Matriz4x4 rotacion = Matriz4x4::rotacion_y(angulo);
-
-            // CUBO
+            std::cout << angulo << std::endl;
+            // 3. Transformar y proyectar cada vértice
             std::vector<sf::Vector2f> puntosProyectados;
             puntosProyectados.reserve(cubo.size());
 
             for (const auto &vertice : cubo)
             {
-                Vector3 puntoRotado = rotacion * vertice;
-                float x_pantalla = puntoRotado.get_x() * 100.0f + 400.0f;
-                float y_pantalla = puntoRotado.get_y() * 100.0f + 300.0f;
+                // Modelo: rotación
+                Vector3 puntoMundo = rotacion * vertice;
+
+                // Vista: pasar a espacio de cámara
+                Vector3 puntoCamara = vista * puntoMundo;
+
+                // Proyección ortográfica (escala y centra)
+                float x_pantalla = puntoCamara.get_x() * 100.0f + 400.0f;
+                float y_pantalla = puntoCamara.get_y() * 100.0f + 300.0f;
+
                 puntosProyectados.push_back(sf::Vector2f(x_pantalla, y_pantalla));
             }
 
-            // Aristas
+            // 4. Dibujar aristas
             sf::VertexArray lineas(sf::Lines, aristas.size() * 2);
             for (size_t i = 0; i < aristas.size(); ++i)
             {
@@ -165,9 +180,10 @@ int main()
                 lineas[2 * i].color = sf::Color::White;
                 lineas[2 * i + 1].color = sf::Color::White;
             }
-            window.clear();
-            window.draw(lineas); // dibuja el cubo completo con una sola llamada
 
+            // 5. Dibujar en pantalla
+            window.clear();
+            window.draw(lineas);
             window.display();
         }
     }

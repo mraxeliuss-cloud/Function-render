@@ -164,3 +164,33 @@ Matriz4x4 Matriz4x4::rotacion_z(float angulo)
     resultado.matriz[1][1] = cos(angulo);
     return resultado;
 }
+
+Matriz4x4 Matriz4x4::lookAt(const Camara& camara)
+{
+
+    Vector3 delante = camara.target.operator-(camara.eye).normalizar();
+    Vector3 derecha = delante.productoVectorial(camara.up).normalizar();
+    Vector3 arriba = derecha.productoVectorial(delante).normalizar();
+
+    Matriz4x4 resultado;
+
+    resultado.matriz[0][0] = derecha.get_x();
+    resultado.matriz[0][1] = derecha.get_y();
+    resultado.matriz[0][2] = derecha.get_z();
+    resultado.matriz[0][3] = - (camara.eye.productoEscalar(derecha));
+    resultado.matriz[1][0] = arriba.get_x();
+    resultado.matriz[1][1] = arriba.get_y();
+    resultado.matriz[1][2] = arriba.get_z();
+    resultado.matriz[1][3] = - (camara.eye.productoEscalar(arriba));
+    resultado.matriz[2][0] = - delante.get_x();
+    resultado.matriz[2][1] = - delante.get_y();
+    resultado.matriz[2][2] = - delante.get_z();
+    resultado.matriz[2][3] = - (camara.eye.productoEscalar(delante));
+    resultado.matriz[3][0] = 0;
+    resultado.matriz[3][1] = 0;
+    resultado.matriz[3][2] = 0;
+    resultado.matriz[3][3] = 1;
+
+    return resultado;
+
+}

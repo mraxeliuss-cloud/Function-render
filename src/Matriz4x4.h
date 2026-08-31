@@ -1,6 +1,8 @@
 #ifndef MATRIZ4X4_H
 #define MATRIZ4X4_H
 
+#include "Camara.h"
+
 #include <array>
 #include <initializer_list>
 
@@ -35,6 +37,9 @@ class Matriz4x4{
     //Matrices de proyección / TBD, ahora mismo no son necesarias como implementación, dejo la firma 
     static Matriz4x4 ortrografica(float izquierda, float derecha, float abajo, float arriba, float cerca, float lejos);
     static Matriz4x4 perspectiva(float fov, float aspecto, float cerca, float lejos);
+
+    //Método para la cámara
+    static Matriz4x4 lookAt(const Camara& camara);
 
 };
 #endif
