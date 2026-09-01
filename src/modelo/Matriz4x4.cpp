@@ -168,7 +168,7 @@ Matriz4x4 Matriz4x4::rotacion_z(float angulo)
 Matriz4x4 Matriz4x4::lookAt(const Camara& camara)
 {
 
-    Vector3 delante = camara.target.operator-(camara.eye).normalizar();
+    Vector3 delante = (camara.target - camara.eye).normalizar();
     Vector3 derecha = delante.productoVectorial(camara.up).normalizar();
     Vector3 arriba = derecha.productoVectorial(delante).normalizar();
 

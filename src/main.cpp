@@ -3,9 +3,9 @@
 #include <iostream>
 #include <vector>
 
-#include "Vector3.h"
-#include "Matriz4x4.h"
-#include "Camara.h"
+#include "modelo\Vector3.h"
+#include "modelo\Matriz4x4.h"
+#include "modelo\Camara.h"
 
 // Pinta la cuadrícula
 void Pintar_Cuadricula(int mayor_Valor_Pantalla, int espacio_Entre_Casillas, sf::RenderWindow &window)
@@ -58,77 +58,65 @@ sf::VertexArray Pintar_Funcion(int alto_Pantalla, int mayor_Valor_Pantalla, int 
 
 int main()
 {
-
-    // Introducir eventualmente el videomod, pero revisar como ubicar el centro de la pantalla
+    // Configuración de ventana
     int ancho_Pantalla = 800;
     int alto_Pantalla = 600;
-
-    // Espacio entre casillas
     int espacio_Entre_Casillas = 10;
-
-    // Variable de representacion, la usamos como valor máximo
-    // Si bien podríamos asimismo, usar el elemento menor de ambos, de momento prefiero usar el mayor
     float mayor_Valor_Pantalla = std::max(ancho_Pantalla, alto_Pantalla);
 
-    // Variables matemáticas
-    float x = 0;
-    float y;
-
-    // Evento
-    sf::Event evento;
-
-    // Crear la ventana del programa
     sf::RenderWindow window(sf::VideoMode(ancho_Pantalla, alto_Pantalla), "Render de funciones");
+    window.setFramerateLimit(60);
 
-    // Crear la cámara
+    sf::Event evento;
+    sf::Clock reloj;
+
+    // --- INICIALIZACIÓN CORRECTA DE LA CÁMARA ---
     Camara camara;
-    camara.eye = {3.0f, 2.0f, 4.0f};
+    camara.anguloH = 0.0f;
+    camara.anguloV = 0.2f;
+    camara.distancia = 5.0f;
     camara.target = {0.0f, 0.0f, 0.0f};
     camara.up = {0.0f, 1.0f, 0.0f};
+    camara.velocidadMovimiento = 2.0f;
+    camara.updateEye(); // Calcula eye inicial
 
-    // Temporales para probar las representaciones
+    // Datos del cubo
     std::vector<Vector3> cubo = {
-        {-1.0f, -1.0f, -1.0f}, // 0
-        {1.0f, -1.0f, -1.0f},  // 1
-        {1.0f, 1.0f, -1.0f},   // 2
-        {-1.0f, 1.0f, -1.0f},  // 3
-        {-1.0f, -1.0f, 1.0f},  // 4
-        {1.0f, -1.0f, 1.0f},   // 5
-        {1.0f, 1.0f, 1.0f},    // 6
-        {-1.0f, 1.0f, 1.0f}    // 7
+        {-1.0f, -1.0f, -1.0f},
+        { 1.0f, -1.0f, -1.0f},
+        { 1.0f,  1.0f, -1.0f},
+        {-1.0f,  1.0f, -1.0f},
+        {-1.0f, -1.0f,  1.0f},
+        { 1.0f, -1.0f,  1.0f},
+        { 1.0f,  1.0f,  1.0f},
+        {-1.0f,  1.0f,  1.0f}
     };
 
     std::vector<std::pair<int, int>> aristas = {
-        {0, 1}, {1, 2}, {2, 3}, {3, 0}, // cara frontal (z = -1)
-        {4, 5},
-        {5, 6},
-        {6, 7},
-        {7, 4}, // cara trasera (z = 1)
-        {0, 4},
-        {1, 5},
-        {2, 6},
-        {3, 7} // unión entre caras
+        {0,1}, {1,2}, {2,3}, {3,0},
+        {4,5}, {5,6}, {6,7}, {7,4},
+        {0,4}, {1,5}, {2,6}, {3,7}
     };
-    // Display mode
+
     static bool Modo3D = false;
 
     while (window.isOpen())
     {
+        // 1. Procesar eventos
         while (window.pollEvent(evento))
         {
-            // Close window: exit
             if (evento.type == sf::Event::Closed)
                 window.close();
-            if (evento.type == sf::Event::KeyPressed)
-            {
-                if (evento.key.code == sf::Keyboard::M)
-                {
-                    Modo3D = !Modo3D;
-                }
-            }
+
+            if (evento.type == sf::Event::KeyPressed && evento.key.code == sf::Keyboard::M)
+                Modo3D = !Modo3D;
         }
 
-        float y_pantalla;
+        // 2. Delta time
+        float dt = reloj.restart().asSeconds();
+
+        // 3. ACTUALIZAR CÁMARA (esto faltaba)
+        camara.update(dt);
 
         if (!Modo3D)
         {
@@ -137,55 +125,49 @@ int main()
             auto funcion = Pintar_Funcion(alto_Pantalla, mayor_Valor_Pantalla, espacio_Entre_Casillas);
             Pintar_Cuadricula(mayor_Valor_Pantalla, espacio_Entre_Casillas, window);
             window.draw(funcion);
-
             window.display();
         }
         else
         {
-            // 1. Matriz de vista (cámara)
+            // 4. Matriz de vista
             Matriz4x4 vista = Matriz4x4::lookAt(camara);
 
-            // 2. Rotación del cubo
-            static float angulo = 1.0f;
-            angulo += 0.1f;
+            // 5. Rotación del cubo
+            static float angulo = 0.0f;
+            angulo += 1.0f * dt;
             Matriz4x4 rotacion = Matriz4x4::rotacion_y(angulo);
-            std::cout << angulo << std::endl;
-            // 3. Transformar y proyectar cada vértice
+
+            // 6. Transformar y proyectar
             std::vector<sf::Vector2f> puntosProyectados;
             puntosProyectados.reserve(cubo.size());
 
-            for (const auto &vertice : cubo)
+            for (const auto& vertice : cubo)
             {
-                // Modelo: rotación
                 Vector3 puntoMundo = rotacion * vertice;
-
-                // Vista: pasar a espacio de cámara
                 Vector3 puntoCamara = vista * puntoMundo;
 
-                // Proyección ortográfica (escala y centra)
                 float x_pantalla = puntoCamara.get_x() * 100.0f + 400.0f;
                 float y_pantalla = puntoCamara.get_y() * 100.0f + 300.0f;
-
                 puntosProyectados.push_back(sf::Vector2f(x_pantalla, y_pantalla));
             }
 
-            // 4. Dibujar aristas
+            // 7. Dibujar aristas
             sf::VertexArray lineas(sf::Lines, aristas.size() * 2);
             for (size_t i = 0; i < aristas.size(); ++i)
             {
                 int i1 = aristas[i].first;
                 int i2 = aristas[i].second;
-                lineas[2 * i].position = puntosProyectados[i1];
-                lineas[2 * i + 1].position = puntosProyectados[i2];
-                lineas[2 * i].color = sf::Color::White;
-                lineas[2 * i + 1].color = sf::Color::White;
+                lineas[2*i].position = puntosProyectados[i1];
+                lineas[2*i+1].position = puntosProyectados[i2];
+                lineas[2*i].color = sf::Color::White;
+                lineas[2*i+1].color = sf::Color::White;
             }
 
-            // 5. Dibujar en pantalla
             window.clear();
             window.draw(lineas);
             window.display();
         }
     }
+
     return 0;
 }
