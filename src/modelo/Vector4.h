@@ -17,6 +17,7 @@ class Vector4
 
     public:
 
+    Vector4(float x, float y, float z, float w);
     explicit Vector4(const Vector3& original);
     Vector4(const std::array<float, 4>& array);
 

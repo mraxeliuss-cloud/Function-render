@@ -3,6 +3,7 @@ project(Function_renderer)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /FA")
 
 include(FetchContent)
 FetchContent_Declare(
@@ -17,5 +18,11 @@ add_executable(${PROJECT_NAME}
     src/modelo/Vector4.cpp
     src/modelo/Matriz4x4.cpp
     src/modelo/Camara.cpp
+)
+add_executable(benchmark_matriz
+    tests/benchmark_matriz.cpp
+    src/modelo/Vector3.cpp
+    src/modelo/Vector4.cpp
+    src/modelo/Matriz4x4.cpp
 )
 target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics sfml-window sfml-system)

@@ -4,6 +4,10 @@
 
 #include <array>
 
+
+Vector4::Vector4(float x, float y, float z, float w) 
+    : x(x), y(y), z(z), w(w) {} 
+
 Vector4::Vector4(const Vector3 &vector)
 {
     this->x = vector.get_x();
@@ -18,6 +22,7 @@ Vector4::Vector4(const std::array<float, 4>& array)
     this->z = array[2];
     this->w = array[3];
 }
+
 
 Vector3 Vector4::toVector3() const
 {
