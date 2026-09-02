@@ -29,11 +29,11 @@ void Camara::update(float dt)
     {
         anguloH -= dt * velocidadMovimiento;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Period))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
     {
         distancia += dt * velocidadMovimiento;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Comma))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
     {
         if (distancia > 0.5f)
         {

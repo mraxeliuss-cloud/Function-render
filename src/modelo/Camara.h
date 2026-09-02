@@ -1,3 +1,6 @@
+#ifndef CAMARA_H
+#define CAMARA_H
+
 #include "Vector3.h"
 
 struct Camara {
@@ -18,3 +21,5 @@ struct Camara {
     // Prolly acabará unido en update
     void updateEye();
 };
+
+#endif
