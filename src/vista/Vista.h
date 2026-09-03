@@ -2,8 +2,6 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "Funciones2d.h"
-
 class Vista
 {
     private:
@@ -13,8 +11,18 @@ class Vista
     // No es valor, porque no es copiable, no es puntero por seguridad, evita nullptr
     sf::RenderWindow& ventana;
 
+    bool modo3d = false;
+    int tipoEjes = 0;
+
     public:
     Vista(int ResolucionH, int ResolucionV, sf::RenderWindow& ventana);
-    void dibujar2D(Funcion2d& funcion);
-    void dibujar3D();
+    //Recibe ya el cuerpo limpio, y se llama por frame
+    void mostrar(const std::vector<sf::Drawable*> &mostrado);
+    void dibujarCuadricula();
+    void dibujarEjes();
+
+    void cambioEjes();
+    void invertirModo3d() { this->modo3d = !modo3d; }
+
+    bool getModo3d() const { return this->modo3d; }
 };

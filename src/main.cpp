@@ -6,8 +6,7 @@
 #include "modelo\Vector3.h"
 #include "modelo\Matriz4x4.h"
 #include "modelo\Camara.h"
-#include "vista\Funciones2d.h"
-
+#include "vista\Vista.h"
 
 /*
 TBU: para pasar los puntos de controlador->modelo->controlador->vista
@@ -19,29 +18,6 @@ tiene que ser std::vector y no std::array porque el array no acepta el reserve y
 Necesito un helper para el controlador, una de las cosas que debe hacer es:
 Vector3 -> sf::VertexArray
 */
-// Pinta la cuadrícula
-void Pintar_Cuadricula(int mayor_Valor_Pantalla, int espacio_Entre_Casillas, sf::RenderWindow &window)
-{
-
-    // Ejes
-    static sf::RectangleShape Eje_x(sf::Vector2f(10000.f, 1.f));
-    static sf::RectangleShape Eje_y(sf::Vector2f(1.f, 10000.f));
-
-    // Color
-    Eje_x.setFillColor(sf::Color::Blue);
-    Eje_y.setFillColor(sf::Color::Blue);
-
-    // Dibujar la cuadrícula
-    for (size_t i = 0.f; i < mayor_Valor_Pantalla; i += espacio_Entre_Casillas)
-    {
-        // Espaciamos los ejes 10 px, para poder hacer un análisis de los resultados
-        Eje_x.setPosition(sf::Vector2f(0, i));
-        Eje_y.setPosition(sf::Vector2f(i, 0));
-
-        window.draw(Eje_x);
-        window.draw(Eje_y);
-    }
-}
 
 sf::VertexArray Pintar_Funcion(int alto_Pantalla, int mayor_Valor_Pantalla, int espacio_Entre_Casillas)
 {
@@ -78,6 +54,9 @@ int main()
     float mayor_Valor_Pantalla = std::max(ancho_Pantalla, alto_Pantalla);
 
     sf::RenderWindow window(sf::VideoMode(ancho_Pantalla, alto_Pantalla), "Render de funciones");
+
+    Vista vista(ancho_Pantalla, alto_Pantalla, window);
+
     window.setFramerateLimit(60);
 
     sf::Event evento;
@@ -96,22 +75,18 @@ int main()
     // Datos del cubo
     std::vector<Vector3> cubo = {
         {-1.0f, -1.0f, -1.0f},
-        { 1.0f, -1.0f, -1.0f},
-        { 1.0f,  1.0f, -1.0f},
-        {-1.0f,  1.0f, -1.0f},
-        {-1.0f, -1.0f,  1.0f},
-        { 1.0f, -1.0f,  1.0f},
-        { 1.0f,  1.0f,  1.0f},
-        {-1.0f,  1.0f,  1.0f}
-    };
+        {1.0f, -1.0f, -1.0f},
+        {1.0f, 1.0f, -1.0f},
+        {-1.0f, 1.0f, -1.0f},
+        {-1.0f, -1.0f, 1.0f},
+        {1.0f, -1.0f, 1.0f},
+        {1.0f, 1.0f, 1.0f},
+        {-1.0f, 1.0f, 1.0f}};
 
     std::vector<std::pair<int, int>> aristas = {
-        {0,1}, {1,2}, {2,3}, {3,0},
-        {4,5}, {5,6}, {6,7}, {7,4},
-        {0,4}, {1,5}, {2,6}, {3,7}
-    };
+        {0, 1}, {1, 2}, {2, 3}, {3, 0}, {4, 5}, {5, 6}, {6, 7}, {7, 4}, {0, 4}, {1, 5}, {2, 6}, {3, 7}};
 
-    static bool Modo3D = false;
+    static int modoEjes = 0;
 
     while (window.isOpen())
     {
@@ -122,26 +97,21 @@ int main()
                 window.close();
 
             if (evento.type == sf::Event::KeyPressed && evento.key.code == sf::Keyboard::M)
-                Modo3D = !Modo3D;
+                vista.invertirModo3d();
+            if (!vista.getModo3d() && evento.type == sf::Event::KeyPressed && evento.key.code == sf::Keyboard::E)
+            {
+                vista.cambioEjes();
+            }
         }
 
         // 2. Delta time
         float dt = reloj.restart().asSeconds();
-
-        // 3. ACTUALIZAR CÁMARA (esto faltaba)
         camara.update(dt);
 
-        if (!Modo3D)
-        {
-            // Modo 2D
-            window.clear();
-            auto funcion = Pintar_Funcion(alto_Pantalla, mayor_Valor_Pantalla, espacio_Entre_Casillas);
-            Pintar_Cuadricula(mayor_Valor_Pantalla, espacio_Entre_Casillas, window);
-            window.draw(funcion);
-            window.display();
-        }
-        else
-        {
+        // Modo 2D
+        auto funcion = Pintar_Funcion(alto_Pantalla, mayor_Valor_Pantalla, espacio_Entre_Casillas);
+        vista.mostrar(funcion);
+        /*
             // 4. Matriz de vista
             Matriz4x4 vista = Matriz4x4::lookAt(camara);
 
@@ -179,7 +149,7 @@ int main()
             window.clear();
             window.draw(lineas);
             window.display();
-        }
+        */
     }
 
     return 0;
