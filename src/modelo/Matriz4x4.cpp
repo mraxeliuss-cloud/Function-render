@@ -82,6 +82,7 @@ Matriz4x4 Matriz4x4::operator*(const Matriz4x4 &multiplo) const
     return Matriz4x4(resultado);
 }
 
+
 Vector3 Matriz4x4::operator*(const Vector3 &multiplo) const
 {
 
@@ -94,7 +95,7 @@ Vector3 Matriz4x4::operator*(const Vector3 &multiplo) const
     float r3 = matriz[3][0] * multiplo.get_x() + matriz[3][1] * multiplo.get_y() +
                matriz[3][2] * multiplo.get_z() + matriz[3][3];
 
-    if (Matematicas::floatIguales(r3,0) || Matematicas::floatIguales(r3,1))
+    if (Matematicas::floatIguales(r3, 0) || Matematicas::floatIguales(r3, 1))
     {
         return Vector3(r0, r1, r2);
     }
@@ -197,4 +198,9 @@ Matriz4x4 Matriz4x4::lookAt(const Camara &camara)
     resultado.matriz[3][3] = 1;
 
     return resultado;
+}
+
+float Matriz4x4::getElemento(int fila, int columna) const
+{
+    return this->matriz[fila][columna];
 }

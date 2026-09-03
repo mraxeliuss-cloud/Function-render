@@ -41,5 +41,9 @@ class Matriz4x4{
     //Método para la cámara
     static Matriz4x4 lookAt(const Camara& camara);
 
+
+    // Helper
+    // Solo necesario de forma temporal para el benchmarking, evitar que el compilador optimice más de lo que queremos
+    float getElemento(int fila, int columna) const ;
 };
 #endif

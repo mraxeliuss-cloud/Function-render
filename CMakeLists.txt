@@ -25,4 +25,5 @@ add_executable(benchmark_matriz
     src/modelo/Vector4.cpp
     src/modelo/Matriz4x4.cpp
 )
+target_include_directories(${PROJECT_NAME} PRIVATE src)
 target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics sfml-window sfml-system)

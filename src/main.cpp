@@ -6,7 +6,19 @@
 #include "modelo\Vector3.h"
 #include "modelo\Matriz4x4.h"
 #include "modelo\Camara.h"
+#include "vista\Funciones2d.h"
 
+
+/*
+TBU: para pasar los puntos de controlador->modelo->controlador->vista
+usar un std::vector<Vector3> con reserve() para reservar espacio y evitar reasignaciones
+tiene que ser std::vector y no std::array porque el array no acepta el reserve y tiene tamaño fijo
+*/
+
+/*
+Necesito un helper para el controlador, una de las cosas que debe hacer es:
+Vector3 -> sf::VertexArray
+*/
 // Pinta la cuadrícula
 void Pintar_Cuadricula(int mayor_Valor_Pantalla, int espacio_Entre_Casillas, sf::RenderWindow &window)
 {
@@ -17,7 +29,7 @@ void Pintar_Cuadricula(int mayor_Valor_Pantalla, int espacio_Entre_Casillas, sf:
 
     // Color
     Eje_x.setFillColor(sf::Color::Blue);
-    Eje_y.setFillColor(sf::Color::Magenta);
+    Eje_y.setFillColor(sf::Color::Blue);
 
     // Dibujar la cuadrícula
     for (size_t i = 0.f; i < mayor_Valor_Pantalla; i += espacio_Entre_Casillas)
@@ -50,6 +62,7 @@ sf::VertexArray Pintar_Funcion(int alto_Pantalla, int mayor_Valor_Pantalla, int 
         y = i * (-i);
 
         // alto_Pantalla / 2 ubica el inicio de la función en el centro de la pantalla
+        // Cada vector2f es una posición de VertexArray
         funcion[i].position = sf::Vector2f(x, (alto_Pantalla / 2) - y);
         funcion[i].color = sf::Color::Green;
     }
