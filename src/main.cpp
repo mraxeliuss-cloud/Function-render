@@ -2,11 +2,13 @@
 #include <algorithm>
 #include <iostream>
 #include <vector>
+#include <utility>
 
 #include "modelo\Vector3.h"
 #include "modelo\Matriz4x4.h"
 #include "modelo\Camara.h"
 #include "vista\Vista.h"
+#include "Utilidades.h"
 
 /*
 TBU: para pasar los puntos de controlador->modelo->controlador->vista
@@ -17,33 +19,8 @@ tiene que ser std::vector y no std::array porque el array no acepta el reserve y
 /*
 Necesito un helper para el controlador, una de las cosas que debe hacer es:
 Vector3 -> sf::VertexArray
+Esto al final es pipeline, dentro del main 
 */
-
-sf::VertexArray Pintar_Funcion(int alto_Pantalla, int mayor_Valor_Pantalla, int espacio_Entre_Casillas)
-{
-    // Declaracion de la funcion
-    // LineStrip usa cada vértice como inicio del siguiente
-    // Lo que permite representaciones continuas, no solo discretas
-    sf::VertexArray funcion(sf::PrimitiveType::LineStrip, mayor_Valor_Pantalla / 10);
-
-    float x = 0;
-    float y;
-
-    // Pintar funcion
-    for (float i = 0; i < mayor_Valor_Pantalla / 10; i++)
-    {
-
-        x = i * 10;
-        // Función
-        y = i * (-i);
-
-        // alto_Pantalla / 2 ubica el inicio de la función en el centro de la pantalla
-        // Cada vector2f es una posición de VertexArray
-        funcion[i].position = sf::Vector2f(x, (alto_Pantalla / 2) - y);
-        funcion[i].color = sf::Color::Green;
-    }
-    return funcion;
-}
 
 int main()
 {
@@ -51,7 +28,7 @@ int main()
     int ancho_Pantalla = 800;
     int alto_Pantalla = 600;
     int espacio_Entre_Casillas = 10;
-    float mayor_Valor_Pantalla = std::max(ancho_Pantalla, alto_Pantalla);
+    float menorValorPantalla = std::min(ancho_Pantalla, alto_Pantalla);
 
     sf::RenderWindow window(sf::VideoMode(ancho_Pantalla, alto_Pantalla), "Render de funciones");
 
@@ -87,6 +64,10 @@ int main()
         {0, 1}, {1, 2}, {2, 3}, {3, 0}, {4, 5}, {5, 6}, {6, 7}, {7, 4}, {0, 4}, {1, 5}, {2, 6}, {3, 7}};
 
     static int modoEjes = 0;
+    // Vector de elementos a dibujar
+    std::vector<sf::Drawable *> dibujables;
+    // Just in case, no creo que haya que dibujar más de 10 funciones juntas.
+    dibujables.reserve(10);
 
     while (window.isOpen())
     {
@@ -108,9 +89,8 @@ int main()
         float dt = reloj.restart().asSeconds();
         camara.update(dt);
 
-        // Modo 2D
-        auto funcion = Pintar_Funcion(alto_Pantalla, mayor_Valor_Pantalla, espacio_Entre_Casillas);
-        vista.mostrar(funcion);
+        // PIPELINE 2D 
+        funcion2d( dibujables, menorValorPantalla, alto_Pantalla);
         /*
             // 4. Matriz de vista
             Matriz4x4 vista = Matriz4x4::lookAt(camara);
@@ -150,7 +130,22 @@ int main()
             window.draw(lineas);
             window.display();
         */
+        vista.mostrar(dibujables);
     }
 
     return 0;
+}
+
+void funcion2d(std::vector<sf::Drawable *> dibujables, int menorValorPantalla, int alto_Pantalla){
+        auto calculada = Matematicas::calcularFuncion(menorValorPantalla);
+        sf::VertexArray funcion(sf::PrimitiveType::LineStrip, calculada.size());
+
+        for (size_t i = 0; i < calculada.size(); ++i)
+        {
+            float enY = (alto_Pantalla / 2) - calculada[i].second;
+            funcion[i].position = sf::Vector2f(calculada[i].first, enY);
+            funcion[i].color = sf::Color::Green; // Asigna color (opcional)
+        }
+        dibujables.clear();
+        dibujables.push_back(&funcion);
 }
